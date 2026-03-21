@@ -101,6 +101,18 @@ See the [AgentContract specification](https://github.com/agentcontract/spec/blob
 
 ---
 
+## Roadmap
+
+- [ ] `rollback` violation action (snapshot/restore support)
+- [ ] `requires` and `invariant` clause evaluation
+- [ ] HMAC-signed audit trail (mirrors Python implementation)
+- [ ] `agentcontract serve` — local contract validation server
+- [ ] LangChain.js and Vercel AI SDK middleware adapters
+
+Contributions welcome — see the [spec](https://github.com/agentcontract/spec) for implementation requirements.
+
+---
+
 ## License
 
 Apache 2.0 — *Part of the [AgentContract](https://github.com/agentcontract) open standard.*
