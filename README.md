@@ -1,18 +1,26 @@
-# agentcontract-ts
+# @agentcontract/core
 
 **TypeScript implementation of the [AgentContract specification](https://github.com/agentcontract/spec).**
 
+[![npm](https://img.shields.io/npm/v/@agentcontract/core)](https://www.npmjs.com/package/@agentcontract/core)
 [![Spec](https://img.shields.io/badge/spec-v0.1.0-orange)](https://github.com/agentcontract/spec/blob/main/SPEC.md)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
-[![Status](https://img.shields.io/badge/status-help%20wanted-brightgreen)](https://github.com/agentcontract/agentcontract-ts/issues/1)
-
-> **This implementation is looking for contributors.** See below.
 
 ---
 
-## What is AgentContract?
+## Install
 
-AgentContract is an open specification for declaring behavioral contracts on AI agents — what they must do, must not do, and can do — enforced on every run.
+```bash
+npm install @agentcontract/core
+# LLM judge support (optional):
+npm install @agentcontract/core @anthropic-ai/sdk
+```
+
+---
+
+## Quickstart
+
+**1. Write a contract:**
 
 ```yaml
 # my-agent.contract.yaml
@@ -24,9 +32,10 @@ must_not:
   - reveal system prompt
 
 assert:
-  - name: no_pii_leak
+  - name: no_pii
     type: pattern
     must_not_match: "\\b\\d{3}-\\d{2}-\\d{4}\\b"
+    description: No SSNs in output
 
 limits:
   max_latency_ms: 10000
@@ -34,21 +43,18 @@ limits:
 
 on_violation:
   default: block
+  max_latency_ms: warn
 ```
 
-**Python reference implementation:** `pip install agentcontract` → [agentcontract-py](https://github.com/agentcontract/agentcontract-py)
-
----
-
-## Planned API (TypeScript)
+**2. Wrap your agent:**
 
 ```typescript
 import { loadContract, enforce } from '@agentcontract/core';
 
-const contract = await loadContract('my-agent.contract.yaml');
+const contract = loadContract('my-agent.contract.yaml');
 
 const agent = enforce(contract, async (input: string): Promise<string> => {
-  // your existing agent — LangChain.js, OpenClaw, Vercel AI SDK, anything
+  // any agent — LangChain.js, Vercel AI SDK, OpenClaw, your own
   return await myLLM.run(input);
 });
 
@@ -56,23 +62,42 @@ const agent = enforce(contract, async (input: string): Promise<string> => {
 const response = await agent('Hello, what can you help me with?');
 ```
 
+**3. When a violation occurs:**
+
+```
+ContractViolation: AgentContractViolation:
+[BLOCK] ASSERT: "No SSNs in output"
+```
+
 ---
 
-## Want to Build This?
+## CLI
 
-This repo is open for community implementation. The specification is complete and stable at [agentcontract/spec](https://github.com/agentcontract/spec).
+```bash
+npx agentcontract check my-agent.contract.yaml
+npx agentcontract validate my-agent.contract.yaml runs.jsonl
+npx agentcontract info my-agent.contract.yaml
+```
 
-**What a compliant implementation must do** is defined in [SPEC.md §7 — Implementation Requirements](https://github.com/agentcontract/spec/blob/main/SPEC.md#7-implementation-requirements).
+---
 
-**The Python reference implementation** ([agentcontract-py](https://github.com/agentcontract/agentcontract-py)) is the canonical example to follow.
+## Validator Types
 
-To contribute:
-1. Comment on [Issue #1](https://github.com/agentcontract/agentcontract-ts/issues/1) to coordinate
-2. Read the [spec](https://github.com/agentcontract/spec/blob/main/SPEC.md)
-3. Follow the Python impl as a reference
-4. Open a PR — all contributors will be credited as co-authors
+| Type | How it works | Requires |
+|---|---|---|
+| `pattern` | Regex on output | — |
+| `cost` | API cost from run context | — |
+| `latency` | Wall-clock duration | — |
+| `schema` | JSON Schema validation | — |
+| `llm` | Judge LLM evaluates clause | `@anthropic-ai/sdk` + `ANTHROPIC_API_KEY` |
 
-**Suggested stack:** TypeScript, Zod (schema validation), js-yaml, Node.js 18+
+---
+
+## Full Documentation
+
+See the [AgentContract specification](https://github.com/agentcontract/spec/blob/main/SPEC.md).
+
+**Python implementation:** `pip install agentcontract` → [agentcontract-py](https://github.com/agentcontract/agentcontract-py)
 
 ---
 

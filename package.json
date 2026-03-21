@@ -1,0 +1,54 @@
+{
+  "name": "@agentcontract/core",
+  "version": "0.1.0",
+  "description": "Behavioral contracts for AI agents — TypeScript implementation of the AgentContract specification",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "bin": {
+    "agentcontract": "./dist/cli.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "keywords": ["ai", "agents", "contracts", "llm", "safety", "compliance", "validation", "agentcontract"],
+  "author": "Mauro Moro",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/agentcontract/agentcontract-ts.git"
+  },
+  "homepage": "https://github.com/agentcontract/spec",
+  "bugs": { "url": "https://github.com/agentcontract/agentcontract-ts/issues" },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "commander": "^13.0.0",
+    "js-yaml": "^4.1.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^22.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^2.0.0"
+  },
+  "peerDependencies": {
+    "@anthropic-ai/sdk": ">=0.20.0"
+  },
+  "peerDependenciesMeta": {
+    "@anthropic-ai/sdk": { "optional": true }
+  }
+}
