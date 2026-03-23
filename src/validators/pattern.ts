@@ -10,11 +10,22 @@ export class PatternValidator implements Validator {
     private description = '',
   ) {}
 
+  private _compile(pattern: string): RegExp {
+    // Convert Python-style inline flags e.g. (?i) → RegExp flags
+    const inlineFlagMap: Record<string, string> = { i: 'i', m: 'm', s: 's' };
+    let flags = '';
+    const stripped = pattern.replace(/^\(\?([imsx]+)\)/, (_, f: string) => {
+      for (const ch of f) if (inlineFlagMap[ch]) flags += inlineFlagMap[ch];
+      return '';
+    });
+    return new RegExp(stripped, flags);
+  }
+
   validate(context: RunContext): ValidationResult {
     const output = context.output;
 
     if (this.mustNotMatch) {
-      const re = new RegExp(this.mustNotMatch);
+      const re = this._compile(this.mustNotMatch);
       const match = re.exec(output);
       if (match) {
         return {
@@ -29,7 +40,7 @@ export class PatternValidator implements Validator {
     }
 
     if (this.mustMatch) {
-      const re = new RegExp(this.mustMatch);
+      const re = this._compile(this.mustMatch);
       if (!re.test(output)) {
         return {
           passed: false,

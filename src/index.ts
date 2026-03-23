@@ -4,7 +4,7 @@
  * https://github.com/agentcontract/spec
  */
 
-export const VERSION = '0.1.1';
+export const VERSION = '0.1.2';
 export const SPEC_VERSION = '0.1.0';
 
 export { loadContract } from './loader.js';
