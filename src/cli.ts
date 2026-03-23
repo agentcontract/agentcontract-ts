@@ -19,11 +19,11 @@ program
   .action((contractFile: string) => {
     try {
       const contract = loadContract(contractFile);
-      console.log('✓ Contract is valid');
-      console.log(`  Agent:    ${contract.agent}`);
-      console.log(`  Version:  ${contract.version}`);
-      console.log(`  Spec:     ${contract['spec-version']}`);
-      console.log(`  Clauses:  ${contract.must.length} must, ${contract.must_not.length} must_not, ${contract.assert.length} assertions`);
+      const nAssertions = contract.assert.length;
+      const limits = contract.limits;
+      const nLimits = (limits.max_latency_ms != null ? 1 : 0) + (limits.max_cost_usd != null ? 1 : 0) + (limits.max_tokens != null ? 1 : 0);
+      console.log(`✓ Contract valid: ${contract.agent} v${contract.version}`);
+      console.log(`  ${nAssertions} assertions, ${nLimits} limits`);
     } catch (e) {
       console.error(`✗ Invalid contract: ${e instanceof Error ? e.message : e}`);
       process.exit(1);

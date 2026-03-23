@@ -30,6 +30,7 @@ export interface RunResult {
   agent: string;
   contractVersion: string;
   violations: ViolationRecord[];
+  clausesChecked: number;
   context: RunContext;
   outcome: 'pass' | 'violation';
 }
@@ -99,7 +100,7 @@ export class ContractRunner {
     const blocking = ['block', 'rollback', 'halt_and_alert'];
     const passed = !violations.some((v) => blocking.includes(v.actionTaken));
 
-    return { passed, runId: rid, agent: c.agent, contractVersion: c.version, violations, context, outcome: passed ? 'pass' : 'violation' };
+    return { passed, runId: rid, agent: c.agent, contractVersion: c.version, violations, clausesChecked: c.assert.length, context, outcome: passed ? 'pass' : 'violation' };
   }
 
   private _checkLimits(context: RunContext): ViolationRecord[] {
